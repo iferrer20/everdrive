@@ -1,0 +1,58 @@
+
+<%inc 
+#include <filesystem> 
+namespace fs = std::filesystem;
+%>
+
+<%c++
+    const bool notfound = @@.get<bool>("notfound");
+    const auto& drivename = @@.get<std::string>("drivename");
+    const auto& path = @@.get<fs::path>("path");
+%>
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drive {% (notfound ? "Not Found" : drivename) %}</title>
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=inter&display=swap" rel="stylesheet"> 
+    <!-- icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
+
+    <!-- styles -->
+    <link rel="stylesheet" href="/public/css/styles.css">
+
+    <!-- scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/public/js/drive.js" async></script>
+</head>
+<body>
+    <%view Header %>
+    <%c++ if (notfound) { %>
+        <%view DriveNotFound %>
+
+    <%c++ } else { /* Found */  %>
+
+        <%c++
+        for (const auto & entry : fs::directory_iterator(path)) {
+            auto& path = entry.path();
+            const auto fname = path.filename().string();
+        %>
+            {%fname%}<br>
+
+
+        <%c++ } %>
+
+
+
+    <%c++ }
+    %> 
+    
+
+</body>
+</html>

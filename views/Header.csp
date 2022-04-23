@@ -1,0 +1,7 @@
+<div class="header">
+    <img src="/public/img/logo_horizontal.png" alt="logo">
+    <input type="text" placeholder="Buscar en drive">
+    <span class="material-icons-round">
+    account_circle
+    </span>
+</div>
