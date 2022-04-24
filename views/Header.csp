@@ -1,6 +1,8 @@
 <div class="header">
     <img src="/public/img/logo_horizontal.png" alt="logo">
+    <%c++ if (!@@.get<bool>("notfound")) {%>
     <input type="text" placeholder="Buscar en drive">
+    <%c++ } %>
     <span class="material-icons-round">
     account_circle
     </span>

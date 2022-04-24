@@ -37,17 +37,48 @@ namespace fs = std::filesystem;
         <%view DriveNotFound %>
 
     <%c++ } else { /* Found */  %>
-
-        <%c++
+    
+    <div class="drive-main">
+        <div class="path">Path</div>
+        <div class="info">
+            <div class="author">
+                <span class="material-icons-round">account_circle</span>
+                Anonymous
+            </div>
+            <div class="drive">
+                <span class="material-icons-round">cloud</span>
+                [[ drivename ]]
+            </div>
+            
+        </div>
+        <div class="explorer">
+        <table>
+        <tr>
+            <th></th>
+            <th>Filename</th>
+            <th>Size</th>
+        </tr>
+        <%c++ 
         for (const auto & entry : fs::directory_iterator(path)) {
             auto& path = entry.path();
             const auto fname = path.filename().string();
+            const auto isDir = entry.is_directory();
+            const auto size = isDir ? "-" : std::to_string(entry.file_size());
+            const auto lastMod = entry.last_write_time();
         %>
-            {%fname%}<br>
+            <tr class="entry">
+                <td class="icon"><span class="material-icons-round {% (isDir ? "folder\">folder" : "file\">description") %}</span></td>
+                <td class="name">{%fname%}</td>
+                <td class="size">{% size %}</td>
+            </tr>
 
 
         <%c++ } %>
 
+        </table>
+        </div>
+
+    </div>
 
 
     <%c++ }

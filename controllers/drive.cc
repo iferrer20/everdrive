@@ -45,6 +45,13 @@ public:
         }
 
         fs::path path {"../drive_data/" + pathstr};
+        if (fs::is_regular_file(path)) {
+            auto res = HttpResponse::newFileResponse(path.string());
+            res->setStatusCode(k200OK);
+            callback(res);
+            return;
+        }
+        
         HttpViewData data;
         data["path"] = path;
         data["pathstr"] = data.needTranslation(pathstr) ? data.htmlTranslate(pathstr) : pathstr;
