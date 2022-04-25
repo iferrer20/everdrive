@@ -3,7 +3,7 @@ project(everdrive CXX)
 
 include(CheckIncludeFileCXX)
 
-set(DEFAULT_BUILD_TYPE "Release") # Set relase build as default
+#set(DEFAULT_BUILD_TYPE "Release") # Set relase build as default
 check_include_file_cxx(any HAS_ANY)
 check_include_file_cxx(string_view HAS_STRING_VIEW)
 check_include_file_cxx(coroutine HAS_COROUTINE)
@@ -18,8 +18,9 @@ else ()
 endif ()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+#set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(SET_COMPILATION_FLAGS  )
 
 add_executable(${PROJECT_NAME} utils.cc main.cc)
 

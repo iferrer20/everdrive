@@ -43,28 +43,27 @@
             ]
         }*/
     ],
-    /*
     "db_clients": [
         {
             //name: Name of the client,'default' by default
             //"name":"",
             //rdbms: Server type, postgresql,mysql or sqlite3, "postgresql" by default
-            "rdbms": "postgresql",
+            "rdbms": "sqlite3",
             //filename: Sqlite3 db file name
-            //"filename":"",
+            "filename": "../everdrive.db",
             //host: Server address,localhost by default
-            "host": "127.0.0.1",
+            //"host": "127.0.0.1",
             //port: Server port, 5432 by default
-            "port": 5432,
+            //"port": 5432,
             //dbname: Database name
-            "dbname": "test",
+            //"dbname": "everdrive",
             //user: 'postgres' by default
-            "user": "",
+            //"user": "",
             //passwd: '' by default
-            "passwd": "",
+            //"passwd": "",
             //is_fast: false by default, if it is true, the client is faster but user can't call
             //any synchronous interface of it.
-            "is_fast": false,
+            //"is_fast": true,
             //client_encoding: The character set used by the client. it is empty string by default which 
             //means use the default character set.
             //"client_encoding": "",
@@ -76,29 +75,6 @@
             "timeout": -1.0
         }
     ],
-    "redis_clients": [
-        {
-            //name: Name of the client,'default' by default
-            //"name":"",
-            //host: Server IP, 127.0.0.1 by default
-            "host": "127.0.0.1",
-            //port: Server port, 6379 by default
-            "port": 6379,
-            //passwd: '' by default
-            "passwd": "",
-            //db index: 0 by default
-            "db": 0,
-            //is_fast: false by default, if it is true, the client is faster but user can't call
-            //any synchronous interface of it.
-            "is_fast": false,
-            //number_of_connections: 1 by default, if the 'is_fast' is true, the number is the number of  
-            //connections per IO thread, otherwise it is the total number of all connections.  
-            "number_of_connections": 1,
-            //timeout: -1.0 by default, in seconds, the timeout for executing a command.
-            //zero or negative value means no timeout.
-            "timeout": -1.0
-        }
-    ],*/
     "app": {
         //number_of_threads: The number of IO threads, 1 by default, if the value is set to 0, the number of threads
         //is the number of CPU cores
@@ -181,7 +157,7 @@
         //dynamic_views_path: If the path isn't prefixed with /, ./ or ../,
         //it is relative path of document_root path
         "dynamic_views_path": [
-            "./views"
+            "../views"
         ],
         //dynamic_views_output_path: Default by an empty string which means the output path of source 
         //files is the path where the csp files locate. If the path isn't prefixed with /, it is relative 
@@ -229,19 +205,20 @@
         //0 means cache forever, the negative value means no cache
         "static_files_cache_time": 5,
         //simple_controllers_map: Used to configure mapping from path to simple controller
-        /*"simple_controllers_map": [
+        /*
+        "simple_controllers_map": [
             {
-                "path": "/path/name",
-                "controller": "controllerClassName",
+                "path": "/exists",
+                "controller": "exists",
                 "http_methods": [
-                    "get",
                     "post"
                 ],
                 "filters": [
-                    "FilterClassName"
+                    "ValidDrivename"
                 ]
             }
-        ],*/
+        ],
+        */
         //idle_connection_timeout: Defaults to 60 seconds, the lifetime 
         //of the connection without read or write
         "idle_connection_timeout": 60,
@@ -283,7 +260,6 @@
         //reuse_port: Defaults to false, users can run multiple processes listening on the same port at the same time.
         "reuse_port": false
     },
-    //plugins: Define all plugins running in the application
     //custom_config: custom configuration for users. This object can be get by the app().getCustomConfig() method. 
     "custom_config": {}
 }

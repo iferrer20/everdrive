@@ -1,4 +1,5 @@
 #include <drogon/HttpController.h>
+#include <drogon/orm/DbClient.h>
 #include <filesystem>
 #include <string_view>
 #include "../utils.h"
@@ -11,6 +12,7 @@ public:
     METHOD_LIST_BEGIN
     ADD_METHOD_TO(Drive::homepage, "/");
     ADD_METHOD_TO(Drive::exists, "/exists", Post, "ValidDrivenameParam");
+    ADD_METHOD_TO(Drive::create, "/create", Post, "ValidDrivenameParam");
     ADD_METHOD_VIA_REGEX(Drive::read, "/(?!public).*", Get);
     METHOD_LIST_END
 
@@ -20,16 +22,51 @@ public:
     }
 
     void exists(CARGS) {
-        Json::Value data;
-        fs::path path {"../drive_data/"};
-        path.append(req->getParameter("drivename"));
-        data["exists"] = fs::exists(path);
-        auto res = HttpResponse::newHttpJsonResponse(data);
+        DBCLI->execSqlAsync(
+           "SELECT * FROM drives WHERE drivename = $1",  
+            [callback] (const orm::Result &r) {
+                Json::Value data;
+                data["exists"] = r.size() > 0;
+                auto res = HttpResponse::newHttpJsonResponse(data);
+                callback(res);
+            },
+            DBERR,
+            req->getParameter("drivename")
+        );
+        
+    }
+
+    void create(CARGS) {
+        const auto& drivename = req->getParameter("drivename");
+        const auto& password = req->getParameter("password");
+
+        auto res = HttpResponse::newHttpResponse();
+        res->setStatusCode(k302Found);
+        res->addHeader("location", "/" + drivename);
         callback(res);
     }
 
     void read(CARGS) {
-        auto& pathstr = req->getPath();
+        std::string pathstr = std::move(req->getPath());
+        
+
+        if (pathstr.find("../") != std::string::npos || pathstr.find("/..") != std::string::npos) {
+            SENDCODE(500);
+            return;
+        }
+        
+        trimstr(pathstr, '/');
+        fs::path path {"../drive_data/" + pathstr};
+        if (fs::is_regular_file(path)) {
+            auto res = HttpResponse::newFileResponse(path.string());
+            callback(res);
+            return;
+        }
+
+        if (*(pathstr.cend()-1) != '/') { // add / at the end if necessary
+            pathstr += '/';
+        }
+
         std::string drivename;
         if (size_t pos = pathstr.find('/', 1); pos != std::string::npos) {
             drivename = std::string(pathstr.c_str()+1, pos - 1);
@@ -37,26 +74,12 @@ public:
             drivename = std::string(pathstr.c_str()+1);
         }
 
-        if (pathstr.find("../") != std::string::npos) {
-            auto res = HttpResponse::newHttpResponse();
-            res->setStatusCode(k500InternalServerError);
-            callback(res);
-            return;
-        }
-
-        fs::path path {"../drive_data/" + pathstr};
-        if (fs::is_regular_file(path)) {
-            auto res = HttpResponse::newFileResponse(path.string());
-            res->setStatusCode(k200OK);
-            callback(res);
-            return;
-        }
-        
         HttpViewData data;
         data["path"] = path;
         data["pathstr"] = data.needTranslation(pathstr) ? data.htmlTranslate(pathstr) : pathstr;
         data["drivename"] = drivename;
-        data["notfound"] = !fs::exists(path);
+        data["notfound"] = !validDrivename(drivename) || !fs::exists(path);
+        data["goback"] = std::count(pathstr.begin(), pathstr.end(), '/') > 2;
         auto res = HttpResponse::newHttpViewResponse("Drive", data);
         callback(res);
         

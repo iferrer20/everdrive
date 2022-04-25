@@ -90,22 +90,21 @@
   <div class="modal-shadow"></div>
   <!-- modals -->
   <div id="modal-drive-create" class="modal">
-    <form action="">
+    <form method="POST" action="/create">
       <h2>Crear Drive</h2>
-      <input placeholder="Nombre del drive" type="text">
-      <input class="self-left" type="checkbox" name="" id="checkbox-enablepw">
-      <input class="input-password" placeholder="Contraseña" type="password" disabled>
+      <input placeholder="Nombre del drive" name="drivename" type="text">
+      <input class="self-left" type="checkbox" id="checkbox-enablepw">
+      <input class="input-password" name="password" placeholder="Contraseña" type="password" disabled>
       <script>
         $('#checkbox-enablepw').change(function() {
           $("#modal-drive-create .input-password").prop('disabled', !this.checked);
         })
       </script>
       <div class="buttons">
-        <button>Crear</button>
-        <button class="modal-close no-gradient black">Cancelar</button>
+        <button type="submit">Crear</button>
+        <button type="button" class="modal-close no-gradient black">Cancelar</button>
       </div>
     </form>
-    
   </div>
   <div id="modal-drive-access" class="modal">
     <div>Access</div>

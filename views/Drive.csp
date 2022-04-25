@@ -6,6 +6,7 @@ namespace fs = std::filesystem;
 
 <%c++
     const bool notfound = @@.get<bool>("notfound");
+    const bool goback = @@.get<bool>("goback");
     const auto& drivename = @@.get<std::string>("drivename");
     const auto& path = @@.get<fs::path>("path");
 %>
@@ -47,17 +48,24 @@ namespace fs = std::filesystem;
             </div>
             <div class="drive">
                 <span class="material-icons-round">cloud</span>
-                [[ drivename ]]
+                [[ drivename ]] 
             </div>
             
         </div>
         <div class="explorer">
         <table>
-        <tr>
-            <th></th>
-            <th>Filename</th>
-            <th>Size</th>
-        </tr>
+            <tr>
+                <th></th>
+                <th>Filename</th>
+                <th>Size</th>
+            </tr>
+        <%c++ if (goback) { %>
+            <tr class="entry">
+                <td class="icon"><span class="material-icons-round folder">folder</td>
+                <td class="name">..</td>
+                <td class="size"></td>
+            </tr>
+        <%c++ } %>
         <%c++ 
         for (const auto & entry : fs::directory_iterator(path)) {
             auto& path = entry.path();
@@ -69,10 +77,8 @@ namespace fs = std::filesystem;
             <tr class="entry">
                 <td class="icon"><span class="material-icons-round {% (isDir ? "folder\">folder" : "file\">description") %}</span></td>
                 <td class="name">{%fname%}</td>
-                <td class="size">{% size %}</td>
+                <td class="size">{%size%}</td>
             </tr>
-
-
         <%c++ } %>
 
         </table>

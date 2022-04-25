@@ -5,9 +5,15 @@
 @import 'drive';
 @import 'home';
 
-body {
+body, html {
   margin: 0;
   font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
 }
 
 button {

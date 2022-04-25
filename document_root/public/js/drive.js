@@ -28,7 +28,6 @@ entries.click(function() {
     lastClick = { t: Date.now(), selected: $(this) };
 });
 
-
 $(document).keydown(function(event) {
     let selected = $('.selected');
     let newSelected = '';
