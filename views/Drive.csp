@@ -6,9 +6,9 @@ namespace fs = std::filesystem;
 
 <%c++
     const bool notfound = @@.get<bool>("notfound");
-    const bool goback = @@.get<bool>("goback");
     const auto& drivename = @@.get<std::string>("drivename");
     const auto& path = @@.get<fs::path>("path");
+    const auto& pathstr = @@.get<std::string>("pathstr");
 %>
 
 <!doctype html>
@@ -36,7 +36,6 @@ namespace fs = std::filesystem;
     <%view Header %>
     <%c++ if (notfound) { %>
         <%view DriveNotFound %>
-
     <%c++ } else { /* Found */  %>
     
     <div class="drive-main">
@@ -59,14 +58,13 @@ namespace fs = std::filesystem;
                 <th>Filename</th>
                 <th>Size</th>
             </tr>
-        <%c++ if (goback) { %>
+        <%c++ if (std::count(pathstr.begin(), pathstr.end(), '/') > 2) { %>
             <tr class="entry">
                 <td class="icon"><span class="material-icons-round folder">folder</td>
                 <td class="name">..</td>
                 <td class="size"></td>
             </tr>
-        <%c++ } %>
-        <%c++ 
+        <%c++ }
         for (const auto & entry : fs::directory_iterator(path)) {
             auto& path = entry.path();
             const auto fname = path.filename().string();

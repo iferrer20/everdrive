@@ -1,0 +1,3 @@
+-std=c++20
+-I./Bcrypt.cpp/include/
+-I./jwt-cpp/src/include/

@@ -50,7 +50,7 @@
             //rdbms: Server type, postgresql,mysql or sqlite3, "postgresql" by default
             "rdbms": "sqlite3",
             //filename: Sqlite3 db file name
-            "filename": "../everdrive.db",
+            "filename": "./everdrive.db",
             //host: Server address,localhost by default
             //"host": "127.0.0.1",
             //port: Server port, 5432 by default
@@ -83,7 +83,7 @@
         "enable_session": false,
         "session_timeout": 0,
         //document_root: Root path of HTTP document, defaut path is ./
-        "document_root": "../document_root",
+        "document_root": "./document_root",
         //home_page: Set the HTML file of the home page, the default value is "index.html"
         //If there isn't any handler registered to the path "/", the home page file in the "document_root" is send to clients as a response
         //to the request for "/".
@@ -157,7 +157,7 @@
         //dynamic_views_path: If the path isn't prefixed with /, ./ or ../,
         //it is relative path of document_root path
         "dynamic_views_path": [
-            "../views"
+            "./views"
         ],
         //dynamic_views_output_path: Default by an empty string which means the output path of source 
         //files is the path where the csp files locate. If the path isn't prefixed with /, it is relative 

@@ -3,19 +3,18 @@ project(everdrive CXX)
 
 include(CheckIncludeFileCXX)
 
+set(ENABLE_TESTS OFF CACHE BOOL "") # disable tests jwt-cpp
+add_subdirectory(./Bcrypt.cpp/)
+add_subdirectory(./jwt-cpp/)
+
+include_directories(./jwt-cpp/src/include/)
+
 #set(DEFAULT_BUILD_TYPE "Release") # Set relase build as default
 check_include_file_cxx(any HAS_ANY)
 check_include_file_cxx(string_view HAS_STRING_VIEW)
 check_include_file_cxx(coroutine HAS_COROUTINE)
-if (NOT "${CMAKE_CXX_STANDARD}" STREQUAL "")
-    # Do nothing
-elseif (HAS_ANY AND HAS_STRING_VIEW AND HAS_COROUTINE)
-    set(CMAKE_CXX_STANDARD 20)
-elseif (HAS_ANY AND HAS_STRING_VIEW)
-    set(CMAKE_CXX_STANDARD 17)
-else ()
-    set(CMAKE_CXX_STANDARD 14)
-endif ()
+
+set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_CXX_EXTENSIONS OFF)
@@ -23,6 +22,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SET_COMPILATION_FLAGS  )
 
 add_executable(${PROJECT_NAME} utils.cc main.cc)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC bcrypt)
+target_link_libraries(${PROJECT_NAME} PUBLIC jwt)
 
 # ##############################################################################
 # If you include the drogon source code locally in your project, use this method
@@ -71,7 +73,6 @@ target_sources(${PROJECT_NAME}
 # ##############################################################################
 # uncomment the following line for dynamically loading views 
 # set_property(TARGET ${PROJECT_NAME} PROPERTY ENABLE_EXPORTS ON)
-
 # ##############################################################################
 
-add_subdirectory(test)
+#add_subdirectory(test)
