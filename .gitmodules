@@ -1,0 +1,6 @@
+[submodule "Bcrypt.cpp"]
+	path = Bcrypt.cpp
+	url = https://github.com/hilch/Bcrypt.cpp
+[submodule "jwt-cpp"]
+	path = jwt-cpp
+	url = https://github.com/pokowaka/jwt-cpp
