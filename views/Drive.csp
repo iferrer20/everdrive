@@ -9,6 +9,8 @@ namespace fs = std::filesystem;
     const auto& drivename = @@.get<std::string>("drivename");
     const auto& path = @@.get<fs::path>("path");
     const auto& pathstr = @@.get<std::string>("pathstr");
+    const bool ask_password = @@.get<bool>("ask_password");
+
 %>
 
 <!doctype html>
@@ -30,14 +32,19 @@ namespace fs = std::filesystem;
 
     <!-- scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/public/js/index.js" async></script>
     <script src="/public/js/drive.js" async></script>
 </head>
 <body>
+    <div class="modal-shadow"></div>
     <%view Header %>
     <%c++ if (notfound) { %>
         <%view DriveNotFound %>
     <%c++ } else { /* Found */  %>
     
+    <%c++ if (ask_password) { %>
+        <%view AskPassword %>
+    <%c++ } else { %>
     <div class="drive-main">
         <div class="path">Path</div>
         <div class="info">
@@ -86,6 +93,7 @@ namespace fs = std::filesystem;
 
 
     <%c++ }
+    }
     %> 
     
 

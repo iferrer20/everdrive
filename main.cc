@@ -10,14 +10,6 @@ int main() {
     //Load config file
     app().loadConfigFile("./config.json");
     //Run HTTP framework,the method will block in the internal event loop
-    app().setExceptionHandler([] (
-                const std::exception& e, 
-                const HttpRequestPtr& r, 
-                std::function<void (const HttpResponsePtr &)> &&callback) {
-        std::cout << "ERR\n";
-        SENDCODE(500);
-    });
     app().run();
-    
     return 0;
 }

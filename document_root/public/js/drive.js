@@ -1,4 +1,5 @@
 
+
 function selectEntry(entry) {
     $('.selected').removeClass('selected');  
     entry.addClass('selected');
@@ -58,3 +59,6 @@ $(document).keydown(function(event) {
 
     if (newSelected.length) selectEntry(newSelected);
 });
+
+
+setTimeout(() => $('button[modal-open=ask-password]').click(), 100);

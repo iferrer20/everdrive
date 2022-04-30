@@ -3,9 +3,11 @@ project(everdrive CXX)
 
 include(CheckIncludeFileCXX)
 
+# set(DEFAULT_BUILD_TYPE "Debug")
 set(ENABLE_TESTS OFF CACHE BOOL "") # disable tests jwt-cpp
 add_subdirectory(./Bcrypt.cpp/)
 add_subdirectory(./jwt-cpp/)
+set(CMAKE_CXX_FLAGS "-Og -g -fsanitize=address")
 
 include_directories(./jwt-cpp/src/include/)
 

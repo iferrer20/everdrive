@@ -6,6 +6,7 @@
 
 #include "OptionalJWT.h"
 #include "../utils.h"
+#include <jwt/jwt_all.h>
 #include <unordered_map>
 
 using namespace drogon;
@@ -13,13 +14,15 @@ using namespace drogon;
 void OptionalJWT::doFilter(const HttpRequestPtr &req,
                          FilterCallback &&fcb,
                          FilterChainCallback &&fccb) {
-    std::string s;
+    
     try {
-        s = std::to_string(std::get<1>(JWT::Decode(req->getCookie("token"), &signer))["drive_id"].get<int>());
-    } catch(...) {
-        s = "invalid";
+        //payload = std::get<1>(JWT::Decode(req->getCookie("token"), &signer));
+        nlohmann::json header, payload{};
+        std::tie(header, payload) = JWT::Decode(req->getCookie("token"), &signer);
+        req->attributes()->insert("JWT_PAYLOAD", payload);
+    } catch(InvalidTokenError &tfe) {
+        req->attributes()->insert("JWT_PAYLOAD", nlohmann::json{});
     }
-
-    MIDDLEWARE_RESULT("drive_id", s);
+    
     fccb();
 }

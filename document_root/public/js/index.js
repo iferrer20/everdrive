@@ -1,5 +1,6 @@
 
 
+// Modal
 var modal_shadow = $('.modal-shadow');
 $('button[modal-open]').each(function() {
   let modal = $('#' + $(this).attr('modal-open'));

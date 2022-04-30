@@ -20,9 +20,14 @@ public:
     METHOD_LIST_BEGIN
     ADD_METHOD_TO(Drive::homepage, "/");
     ADD_METHOD_TO(Drive::exists, "/exists", Post, "ValidDrivenameParam");
+    //ADD_METHOD_TO(Drive::nothing, "/favicon.ico", Get);
     ADD_METHOD_TO(Drive::create, "/create", Post, "ValidDrivenameParam");
     ADD_METHOD_VIA_REGEX(Drive::read, "/(?!public).*", Get, Post, "OptionalJWT");
     METHOD_LIST_END
+    
+    void nothing(CARGS) {
+
+    }
 
     void homepage(CARGS) {
         auto res = HttpResponse::newRedirectionResponse("/public/home.html");
@@ -66,6 +71,7 @@ public:
     }
 
     void read(CARGS) {
+        
         std::string pathstr = std::move(req->getPath());
         if (pathstr.find("../") != std::string::npos || pathstr.find("/..") != std::string::npos) {
             SENDCODE(500);
@@ -90,31 +96,46 @@ public:
         if (size_t pos = pathstr.find('/', 1); pos != std::string::npos) {
             drivename = std::string(pathstr.c_str()+1, pos - 1);
         } else {
-            drivename = std::string(pathstr.c_str()+1);
+            SENDCODE(500);
+            return;
         }
+        
+        auto& password = req->getParameter("password");
+        auto jwt_drive_id = JWTGETVAL("drive_id", uint32_t);
 
+        
         DBCLI->execSqlAsync(
             "SELECT * FROM drives WHERE name = $1",
-            [callback, &pathstr, &drivename, &req] (const orm::Result& r) {
-                auto hash = r[0]["password"].as<std::string>();
-                auto drive_id = r[0]["drive_id"].as<std::string_view>();
-                bool ask_password {};
+            [callback, pathstr(std::move(pathstr)), drivename(std::move(drivename)), password(std::move(password)), jwt_drive_id] (const orm::Result& r) {
+                
                 HttpViewData data;
-                if (!hash.empty()) { // if exists password, get token data
-                    auto& token_drive_id = req->getParameter("drive_id");
-                    ask_password = !(token_drive_id == drive_id || bcrypt::validatePassword(req->getParameter("password"), hash));
-                }
+                bool ask_password {};
+                std::string new_token;
+                uint32_t drive_id;
+                if (r.size() > 0) {
+                    auto hash = r[0]["password"].as<std::string>();
+                    drive_id = r[0]["drive_id"].as<uint32_t>();
+                    if (!hash.empty()) { // if exists password, get token data
+                        ask_password = !(jwt_drive_id == drive_id || bcrypt::validatePassword(password, hash));
+                    }
+                } 
+                
                 data["drivename"] = drivename;
                 data["pathstr"] = data.needTranslation(pathstr) ? data.htmlTranslate(pathstr) : pathstr;
                 data["path"] = fs::path{"./drive_data/" + pathstr};
                 data["notfound"] = r.size() == 0;
                 data["ask_password"] = ask_password;
+                data["password"] = password;
+                
                 auto res = HttpResponse::newHttpViewResponse("Drive", data);
                 if (ask_password) {
                     res->setStatusCode(k403Forbidden);
+                } else if (r.size() == 0) {
+                    res->setStatusCode(k404NotFound);
                 } else {
                     res->addCookie("token", JWT::Encode(signer, {{"drive_id", drive_id}})); // Renew token
                 }
+                
                 callback(res);
             },
             DBERR,

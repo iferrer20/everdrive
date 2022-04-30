@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#bash scripts/sasswatch.sh &
 while :; do
     cmake -Bbuild -S. 
     make -j 2 -C build

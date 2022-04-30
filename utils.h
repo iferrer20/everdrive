@@ -18,7 +18,14 @@
     SENDCODE(500); \
 }
 
-#define MIDDLEWARE_RESULT(KEY, RESULT) const_cast<std::unordered_map<std::string, std::string>&>(req->getParameters())[KEY] = RESULT
+#define JWTGETVAL(KEY, TYPE) [&req] () { \
+    auto& v = req->getAttributes()->get<nlohmann::json>("JWT_PAYLOAD");  \
+    if (v.contains(KEY)) { \
+        return v[KEY].get<TYPE>(); \
+    } else { \
+        return TYPE{}; \
+    } \
+}() \
 
 bool validDrivename(const std::string& s);
 void trimstr(std::string& str, char trimchar);
